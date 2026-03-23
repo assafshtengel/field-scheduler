@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מערכת שיבוץ מגרשים | תקופת חירום</title>
+<style>
+:root {
+  --primary: #1a73e8;
+  --primary-dark: #1557b0;
+  --primary-light: #e8f0fe;
+  --success: #34a853;
+  --warning: #f9ab00;
+  --danger: #ea4335;
+  --bg: #f5f7fa;
+  --card: #ffffff;
+  --text: #202124;
+  --text-secondary: #5f6368;
+  --border: #dadce0;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  direction: rtl;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 30px;
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+}
+
+.header h1 { font-size: 28px; margin-bottom: 8px; position: relative; }
+.header p { opacity: 0.9; font-size: 16px; position: relative; }
+
+.emergency-badge {
+  display: inline-block;
+  background: var(--warning);
+  color: #333;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 10px;
+  position: relative;
+}
+
+/* Steps Navigation */
+.steps-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.step-btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  cursor: pointer;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: all 0.3s;
+  position: relative;
+}
+
+.step-btn.active {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.step-btn.completed {
+  border-color: var(--success);
+  background: #e6f4ea;
+  color: var(--success);
+}
+
+.step-btn .step-num {
+  display: block;
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+/* Cards */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.card h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card h3 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.form-group small {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  direction: rtl;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+}
+
+/* Checkboxes */
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.checkbox-label:hover { background: var(--primary-light); }
+
+.checkbox-label input:checked + span {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.checkbox-label input { width: auto; }
+
+/* Buttons */
+.btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+.btn-primary:hover { background: var(--primary-dark); }
+
+.btn-success {
+  background: var(--success);
+  color: white;
+}
+.btn-success:hover { background: #2d9249; }
+
+.btn-danger {
+  background: var(--danger);
+  color: white;
+}
+.btn-danger:hover { background: #d33426; }
+
+.btn-outline {
+  background: transparent;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+}
+.btn-outline:hover { background: var(--primary-light); }
+
+.btn-sm { padding: 6px 14px; font-size: 13px; }
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+/* Items list (teams/fields) */
+.item-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.item-card .item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.item-card .item-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--primary);
+}
+
+.item-card .item-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.item-card .item-details span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.remove-btn:hover { background: #fce8e6; }
+
+/* Grid layout for form fields */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+/* Results */
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.schedule-table th, .schedule-table td {
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  text-align: right;
+}
+
+.schedule-table th {
+  background: var(--primary);
+  color: white;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.schedule-table tr:nth-child(even) { background: #f8f9fa; }
+.schedule-table tr:hover { background: var(--primary-light); }
+
+.slot-cell {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Sport type colors */
+.sport-football { background: #e6f4ea; color: #137333; }
+.sport-basketball { background: #fef7e0; color: #b06000; }
+.sport-handball { background: #e8eaf6; color: #3f51b5; }
+.sport-volleyball { background: #fce4ec; color: #c62828; }
+.sport-tennis { background: #fff3e0; color: #e65100; }
+.sport-other { background: #f3e5f5; color: #7b1fa2; }
+
+/* Alerts */
+.alert {
+  padding: 14px 18px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.alert-info { background: #e8f0fe; color: #1a73e8; border: 1px solid #aecbfa; }
+.alert-warning { background: #fef7e0; color: #b06000; border: 1px solid #fdd663; }
+.alert-success { background: #e6f4ea; color: #137333; border: 1px solid #a8dab5; }
+.alert-danger { background: #fce8e6; color: #c5221f; border: 1px solid #f5c6cb; }
+
+/* Conflict badge */
+.conflict-badge {
+  display: inline-block;
+  background: var(--warning);
+  color: #333;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* Print styles */
+.per-team-output {
+  page-break-after: always;
+  margin-bottom: 40px;
+}
+
+.team-schedule-header {
+  background: var(--primary);
+  color: white;
+  padding: 16px 20px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.team-schedule-body {
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 16px;
+}
+
+/* Tabs for results */
+.results-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+  padding-bottom: 0;
+}
+
+.results-tab {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  font-family: inherit;
+}
+
+.results-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* Section visibility */
+.section { display: none; }
+.section.active { display: block; }
+
+/* Stats card */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.stat-card .stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.stat-card .stat-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* Shelter toggle */
+.shelter-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.shelter-yes { background: #e6f4ea; color: #137333; }
+.shelter-no { background: #fce8e6; color: #c5221f; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container { padding: 12px; }
+  .header { padding: 20px; }
+  .header h1 { font-size: 22px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .steps-nav { gap: 4px; }
+  .step-btn { min-width: 100px; padding: 8px 10px; font-size: 12px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media print {
+  .no-print { display: none !important; }
+  .card { box-shadow: none; border: 1px solid #ddd; }
+  body { background: white; }
+  
+  H� , h3 { font-weight: bold; }
+/* Loading animation */
+.loading {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.loading .dot {
+  width: 12px;
+  height: 12px;
+  background: var(--primary);
+  border-radius: 50%;
+  margin: 0 4px;
+  animation: bounce 0.6s infinite alternate;
+}
+
+.loading .dot:nth-child(2) { animation-delay: 0.2s; }
+.loading .dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+  to { transform: translateY(-12px); opacity: 0.4; }
+}
+
+/* Toggle switch */
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  background: #ccc;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.toggle.active { background: var(--success); }
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  right: 2px;
+  transition: transform 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle.active::after { transform: translateX(-22px); }
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+}
+
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 15px; }
+
+/* Duration flex dialog */
+.flex-dialog {
+  background: #fff8e0;
+  border: 2px solid var(--warning);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.flex-dialog h3 { color: #b06000; margin-bottom: 12px; }
+.flex-dialog .team-flex-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.flex-dialog .team-flex-row label { min-width: 120px; font-weight: 600; }
+.flex-dialog input[type="number"] { width: 80px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  
+  
+  
+  
+        <label> class="header">
+    <h1>מערכת שיבוץ מגרשים</h1>
+    <p>ניהול חכם של שיבוץ קבוצות למגרשים בהתאם לאילוצים</p>
+    <div class="emergency-badge">מותאם לתקופת חירום</div>
+  </div>
+
+  <!-- Steps Navigation -->
+  <div class="steps-nav no-print">
+    <button class="step-btn active" onclick="goToStep(1)">
+      <span class="step-num">1</span>
+      מגרשים
+    </button>
+    <button class="step-btn" onclick="goToStep(2)">
+      <span class="step-num">2</span>
+      קבוצות
+    </button>
+    <button class="step-btn" onclick="goToStep(3)">
+      <span class="step-num">3</span>
+      הגדרות
+    </button>
+    <button class="step-btn" onclick="goToStep(4)">
+      <span class="step-num">4</span>
+      שיבוץ
+    </button>
+  </div>
+
+  <!-- STEP 1: Fields/Courts -->
+  <div id="step1" class="section active">
+    <div class="card">
+      <h2>הגדרת מגרשים</h2>
+      <p style="color:var(--text-secondary); margin-bottom:20px;">הוסף את כל המגרשים הזמינים למועדון. ציין את קיבולת השחקנים, זמינות, ומיגון.</p>
+
+      <div id="fieldsContainer"></div>
+
+      <div class="item-card" id="addFieldForm">
+        <h3>הוספת מגרש חדש</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>שם המגרש *</label>
+            <input type="text" id="fieldName" placeholder='לדוגמה: מגרש A - דשא'>
+          </div>
+          <div class="form-group">
+            <label>סוג המגרש</label>
+            <select id="fieldType">
+              <option value="outdoor">פתוח</option>
+              <option value="indoor">מקורה</option>
+              <option value="half">חצי מגרש</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>מקסימום שחקנים *</label>
+            <input type="number" id="fieldCapacity" min="1" value="30" placeholder="30">
+            <small>על פי תקנות תקופת חירום</small>
+          </div>
+          <div class="form-group">
+            <label>ענפי ספורט מתאימים</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label"><input type="checkbox" value="football" checked><span>כדורגל</span></label>
+              <label class="checkbox-label"><input type="checkbox" value="basketball"><span>כדורסל</span></label>
+              <label class="checkbox-label"><input type="checkbox" value="handball"><span>כדוריד</span></label>
+              <label class="checkbox-label"><input type="checkbox" value="volleyball"><span>כדורעף</span></label>
+              <label class="checkbox-label"><input type="checkbox" value="tennis"><span>טניס</span></label>
+              <label class="checkbox-label"><input type="checkbox" value="other"><span>אחר</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>ימים זמינים *</label>
+          <div class="checkbox-group" id="fieldDays">
+            <label class="checkbox-label"><input type="checkbox" value="0" checked><span>ראשון</span></label>
+            <label class="checkbox-label"><input type="checkbox" value="1" checked><span>שני</span></label>
+            <label class="checkbox-label"><input type="checkbox" value="2" checked><span>שלישי</span></label>
+            <label class="checkbox-label"><input type="checkbox" value="3" checked><span>רביעי</span></label>
+            <label class="checkbox-label"><input type="checkbox" value="4" checked><span>חמישי</span></label>
+            <label class="checkbox-label"><input type="checkbox" value="5"><span>שישי</span></label>
+            <label class="checkbox-label"><input type="checkbox" value="6"><span>שבת</span></label>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>שעות פעילות - מ</label>
+            <input type="time" id="fieldTimeFrom" value="07:00">
+          </div>
+          <div class="form-group">
+            <label>שעות פעילות - עד</label>
+            <input type="time" id="fieldTimeTo" value="22:00">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>האם יש מיגון?</label>
+          <div class="toggle-container">
+            <div class="toggle" id="fieldShelterToggle" onclick="this.classList.toggle('active')"></div>
+            <span id="shelterLabel">אין מיגון</span>
+          </div>
+          <small>במצב חירום, מגרש ללא מיגון עשוי להיות מוגבל</small>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="addField()">+ הוסף מגרש</button>
+        </div>
+      </div>
+
+      <div class="btn-group" style="justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="goToStep(2)">המשך לקבוצות ←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Teams -->
+  <div id="step2" class="section">
+    <div class="card">
+      <h2>הגדרת קבוצות</h2>
+      <p style="color:var(--text-secondary); margin-bottom:20px;">הוסף את כל הקבוצות שצריכות להתאמן. ציין ענף, מספר שחקנים, ודרישות אימון.</p>
+
+      <div id="teamsContainer"></div>
+
+      <div class="item-card" id="addTeamForm">
+        <h3>הוספת קבוצה חדשה</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>שם הקבוצה *</label>
+            <input type="text" id="teamName" placeholder='לדוגמה: נערים א כדורגל'>
+          </div>
+          <div class="form-group">
+            <label>ענף ספורט *</label>
+            <select id="teamSport">
+              <option value="football">כדורגל</option>
+              <option value="basketball">כדורסל</option>
+              <option value="handball">כדוריד</option>
+              <option value="volleyball">כדורעף</option>
+              <option value="tennis">טניס</option>
+              <option value="other">אחר</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>מספר שחקנים *</label>
+            <input type="number" id="teamPlayers" min="1" value="20" placeholder="20">
+          </div>
+          <div class="form-group">
+            <label>שם המאמן</label>
+            <input type="text" id="teamCoach" placeholder="שם המאמן">
+          </div>
+          <div class="form-group">
+            <label>אימונים בשבוע *</label>
+            <input type="number" id="teamTrainings" min="1" max="7" value="3" placeholder="3">
+          </div>
+          <div class="form-group">
+            <label>משך אימון (דקות) *</label>
+            <input type="number" id="teamDuration" min="30" max="180" value="90" step="15" placeholder="90">
+            <small>90 דקות = שעה וחצי</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>ימים מועדפים (לא חובה)</label>
+          <div class="checkbox-group" id="teamPreferredDays">
+            <label class="checkbox-label"><input type="checkbox" value="0"><span>ראשון</span></label>
+            <label class="checkbox-label"><input type="checkbox" value="1"><span>שני</span></label>
+            <label class="checkbox-label"><input type="checkbox" value="2"><span>שלישי</span></label>
+            <label class="checkbox-label"><input type="checkbox" value="3"><span>רביעי</span></label>
+            <label class="checkbox-label"><input type="checkbox" value="4"><span>חמישי</span></label>
+            <label class="checkbox-label"><input type="checkbox" value="5"><span>שישי</span></label>
+            <label class="checkbox-label"><input type="checkbox" value="6"><span>שבת</span></label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>שעות מועדפות (לא חובה)</label>
+          <div class="form-grid">
+            <div class="form-group">
+              <label style="font-weight:normal; font-size:13px;">מ-</label>
+              <input type="time" id="teamTimeFrom" value="">
+            </div>
+            <div class="form-group">
+              <label style="font-weight:normal; font-size:13px;">עד</label>
+              <input type="time" id="teamTimeTo" value="">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>דורש מיגון?</label>
+          <div class="toggle-container">
+            <div class="toggle" id="teamShelterToggle" onclick="this.classList.toggle('active')"></div>
+            <span>לא נדרש מיגון</span>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="addTeam()">+ הוסף קבוצה</button>
+        </div>
+      </div>
+
+      <div class="btn-group" style="justify-content:space-between;">
+        <button class="btn btn-outline" onclick="goToStep(1)">→ חזרה למגרשים</button>
+        <button class="btn btn-primary" onclick="goToStep(3)">המשך להגדרות ←</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Settings -->
+  <div id="step3" class="section">
+    <div class="card">
+      <h2>הגדרות כלליות</h2>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>שם המועדון</label>
+          <input type="text" id="clubName" placeholder="שם המועדון">
+        </div>
+        <div class="form-group">
+          <label>זמן מינימלי בין אימונים באותו מגרש (דקות)</label>
+          <input type="number" id="gapBetween" min="0" max="60" value="15" step="5">
+          <small>זמן לניקוי/החלפה בין קבוצות</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>מצב חירום - הגבלות</label>
+        <div class="toggle-container" style="margin-bottom: 10px;">
+          <div class="toggle active" id="emergencyModeToggle" onclick="this.classList.toggle('active')"></div>
+          <span>מצב חירום פעיל</span>
+        </div>
+        <small>כשפעיל, המערכת תתחשב בהגבלות מיגון ותקנות תקופת חירום</small>
+      </div>
+
+      <div class="form-group">
+        <label>האם לאפשר גמישות במשך האימון?</label>
+        <div class="toggle-container">
+          <div class="toggle active" id="flexDurationToggle" onclick="this.classList.toggle('active')"></div>
+          <span>כן, אפשר לקצר אימונים במידת הצורך</span>
+        </div>
+        <small>אם פעיל, המערכת תשאל לגבי כל קבוצה מה המינימום אפשרי</small>
+      </div>
+
+      <div class="btn-group" style="justify-content:space-between;">
+        <button class="btn btn-outline" onclick="goToStep(2)">→ חזרה לקבוצות</button>
+        <button class="btn btn-success" onclick="runScheduler()">הפעל שיבוץ אוטומטי</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3.5: Flex duration dialog -->
+  <div id="stepFlex" class="section">
+    <div class="card">
+      <h2>גמישות משך אימון</h2>
+      <div class="alert alert-warning">
+        <span>לא הצלחנו לשבץ את כל הקבוצות במשך האימון המבוקש. האם ניתן לקצר חלק מהאימונים?</span>
+      </div>
+      <div id="flexDialogContent"></div>
+      <div class="btn-group" style="justify-content:flex-end;">
+        <button class="btn btn-outline" onclick="goToStep(3)">← חזרה להגדרות</button>
+        <button class="btn btn-success" onclick="runSchedulerWithFlex()">חשב שיבוץ מחדש</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: Results -->
+  <div id="step4" class="section">
+    <div class="card no-print">
+      <h2>תוצאות השיבוץ</h2>
+
+      <div id="schedulerStats" class="stats-grid"></div>
+
+      <div id="schedulerAlerts"></div>
+
+      <div class="results-tabs">
+        <button class="results-tab active" onclick="showResultsTab('master')">לוח כללי</button>
+        <button class="results-tab" onclick="showResultsTab('byField')">לפי מגרש</button>
+        <button class="results-tab" onclick="showResultsTab('byTeam')">לפי קבוצה</button>
+      </div>
+    </div>
+
+    <div id="resultsMaster" class="card"></div>
+    <div id="resultsByField" class="card" style="display:none"></div>
+    <div id="resultsByTeam" style="display:none"></div>
+
+    <div class="card no-print">
+      <h2>פעולות</h2>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="printSchedule()">הדפסה</button>
+        <button class="btn btn-outline" onclick="exportCSV()">ייצוא CSV</button>
+        <button class="btn btn-outline" onclick="shareLink()">שיתוף קישור</button>
+        <button class="btn btn-outline" onclick="goToStep(1)">ערוך נתונים</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============= DATA MODEL =============
+const DAY_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+const SPORT_NAMES = {
+  football: 'כדורגל', basketball: 'כדורסל', handball: 'כדוריד',
+  volleyball: 'כדורעף', tennis: 'טניס', other: 'אחר'
+};
+const SPORT_CLASSES = {
+  football: 'sport-football', basketball: 'sport-basketball', handball: 'sport-handball',
+  volleyball: 'sport-volleyball', tennis: 'sport-tennis', other: 'sport-other'
+};
+
+let fields = [];
+let teams = [];
+let schedule = [];
+let currentStep = 1;
+
+// ============= FIELD MANAGEMENT =============
+function addField() {
+  const name = document.getElementById('fieldName').value.trim();
+  const type = document.getElementById('fieldType').value;
+  const capacity = parseInt(document.getElementById('fieldCapacity').value);
+  const timeFrom = document.getElementById('fieldTimeFrom').value;
+  const timeTo = document.getElementById('fieldTimeTo').value;
+  const hasShelter = document.getElementById('fieldShelterToggle').classList.contains('active');
+
+  if (!name) { alert('נא להזין שם מגרש'); return; }
+  if (!capacity || capacity < 1) { alert('נא להזין קיבולת שחקנים'); return; }
+
+  const sports = [];
+  document.querySelectorAll('#addFieldForm .checkbox-group:first-of-type input:checked').forEach(cb => {
+    sports.push(cb.value);
+  });
+
+  const days = [];
+  document.querySelectorAll('#fieldDays input:checked').forEach(cb => {
+    days.push(parseInt(cb.value));
+  });
+
+  if (days.length === 0) { alert('נא לבחור לפחות יום אחד'); return; }
+
+  fields.push({
+    id: Date.now(),
+    name, type, capacity, sports, days, timeFrom, timeTo, hasShelter
+  });
+
+  document.getElementById('fieldName').value = '';
+  renderFields();
+}
+
+function removeField(id) {
+  fields = fields.filter(f => f.id !== id);
+  renderFields();
+}
+
+function renderFields() {
+  const container = document.getElementById('fieldsContainer');
+  if (fields.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">🏟️</div><p>טרם הוספו מגרשים. הוסף את המגרש הראשון.</p></div>';
+    return;
+  }
+
+  container.innerHTML = fields.map(f => `
+    <div class="item-card">
+      <div class="item-header">
+        <span class="item-title">${f.name}</span>
+        <button class="remove-btn" onclick="removeField(${f.id})">✕</button>
+      </div>
+      <div class="item-details">
+        <span>סוג: ${f.type === 'outdoor' ? 'פתוח' : f.type === 'indoor' ? 'מקורה' : 'חצי מגרש'}</span>
+        <span>קיבולת: ${f.capacity} שחקנים</span>
+        <span>ענפים: ${f.sports.map(s => SPORT_NAMES[s]).join(', ')}</span>
+        <span>ימים: ${f.days.map(d => DAY_NAMES[d]).join(', ')}</span>
+        <span>שעות: ${f.timeFrom} - ${f.timeTo}</span>
+        <span class="shelter-indicator ${f.hasShelter ? 'shelter-yes' : 'shelter-no'}">
+          ${f.hasShelter ? 'יש מיגון' : 'אין מיגון'}
+        </span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============= TEAM MANAGEMENT =============
+function addTeam() {
+  const name = document.getElementById('teamName').value.trim();
+  const sport = document.getElementById('teamSport').value;
+  const players = parseInt(document.getElementById('teamPlayers').value);
+  const coach = document.getElementById('teamCoach').value.trim();
+  const trainingsPerWeek = parseInt(document.getElementById('teamTrainings').value);
+  const duration = parseInt(document.getElementById('teamDuration').value);
+  const timeFrom = document.getElementById('teamTimeFrom').value;
+  const timeTo = document.getElementById('teamTimeTo').value;
+  const needsShelter = document.getElementById('teamShelterToggle').classList.contains('active');
+
+  if (!name) { alert('נא להזין שם קבוצה'); return; }
+  if (!players || players < 1) { alert('נא להזין מספר שחקנים'); return; }
+  if (!trainingsPerWeek || trainingsPerWeek < 1) { alert('נא להזין מספר אימונים בשבוע'); return; }
+
+  const preferredDays = [];
+  document.querySelectorAll('#teamPreferredDays input:checked').forEach(cb => {
+    preferredDays.push(parseInt(cb.value));
+  });
+
+  teams.push({
+    id: Date.now(),
+    name, sport, players, coach, trainingsPerWeek, duration,
+    preferredDays, timeFrom, timeTo, needsShelter,
+    minDuration: duration // default: same as requested
+  });
+
+  document.getElementById('teamName').value = '';
+  document.getElementById('teamCoach').value = '';
+  renderTeams();
+}
+
+function removeTeam(id) {
+  teams = teams.filter(t => t.id !== id);
+  renderTeams();
+}
+
+function renderTeams() {
+  const container = document.getElementById('teamsContainer');
+  if (teams.length === 0) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">👥</div><p>טרם הוספו קבוצות. הוסף את הקבוצה הראשונה.</p></div>';
+    return;
+  }
+
+  container.innerHTML = teams.map(t => `
+    <div class="item-card">
+      <div class="item-header">
+        <span class="item-title">${t.name}</span>
+        <button class="remove-btn" onclick="removeTeam(${t.id})">✕</button>
+      </div>
+      <div class="item-details">
+        <span class="slot-cell ${SPORT_CLASSES[t.sport]}">${SPORT_NAMES[t.sport]}</span>
+        <span>${t.players} שחקנים</span>
+        <span>${t.trainingsPerWeek} אימונים/שבוע</span>
+        <span>${t.duration} דקות לאימון</span>
+        ${t.coach ? `<span>מאמן: ${t.coach}</span>` : ''}
+        ${t.preferredDays.length ? `<span>ימים: ${t.preferredDays.map(d => DAY_NAMES[d]).join(', ')}</span>` : ''}
+        <span class="shelter-indicator ${t.needsShelter ? 'shelter-yes' : 'shelter-no'}">
+          ${t.needsShelter ? 'דורש מיגון' : 'לא דורש מיגון'}
+        </span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============= NAVIGATION =============
+function goToStep(step) {
+  // Validation
+  if (step > 1 && fields.length === 0) {
+    alert('נא להוסיף לפחות מגרש אחד לפני שממשיכים');
+    step = 1;
+  }
+  if (step > 2 && teams.length === 0) {
+    alert('נא להוסיף לפחות קבוצה אחת לפני שממשיכים');
+    step = 2;
+  }
+
+  currentStep = step;
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const targetId = step === 3.5 ? 'stepFlex' : `step${step}`;
+  document.getElementById(targetId).classList.add('active');
+
+  document.querySelectorAll('.step-btn').forEach((btn, i) => {
+    btn.classList.remove('active');
+    if (i + 1 < step) btn.classList.add('completed');
+    if (i + 1 === step) btn.classList.add('active');
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============= SCHEDULING ALGORITHM =============
+function timeToMinutes(t) {
+  if (!t) return null;
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function minutesToTime(m) {
+  const h = Math.floor(m / 60);
+  const min = m % 60;
+  return `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+}
+
+function runScheduler() {
+  if (fields.length === 0 || teams.length === 0) {
+    alert('נא להוסיף מגרשים וקבוצות');
+    return;
+  }
+
+  const gap = parseInt(document.getElementById('gapBetween').value) || 0;
+  const emergencyMode = document.getElementById('emergencyModeToggle').classList.contains('active');
+  const flexAllowed = document.getElementById('flexDurationToggle').classList.contains('active');
+
+  schedule = computeSchedule(teams, fields, gap, emergencyMode);
+
+  const unscheduled = getUnscheduledTrainings(schedule, teams);
+
+  if (unscheduled.length > 0 && flexAllowed) {
+    showFlexDialog(unscheduled);
+    return;
+  }
+
+  displayResults(schedule, unscheduled);
+  goToStep(4);
+}
+
+function runSchedulerWithFlex() {
+  // Update team durations from flex dialog
+  teams.forEach(t => {
+    const input = document.getElementById(`flex_${t.id}`);
+    if (input) {
+      t.minDuration = parseInt(input.value) || t.duration;
+    }
+  });
+
+  const gap = parseInt(document.getElementById('gapBetween').value) || 0;
+  const emergencyMode = document.getElementById('emergencyModeToggle').classList.contains('active');
+
+  schedule = computeSchedule(teams, fields, gap, emergencyMode);
+  const unscheduled = getUnscheduledTrainings(schedule, teams);
+
+  displayResults(schedule, unscheduled);
+  goToStep(4);
+}
+
+function computeSchedule(teams, fields, gap, emergencyMode) {
+  const result = [];
+
+  // Sort teams: most constrained first (fewer preferred days, more trainings needed, needs shelter)
+  const sortedTeams = [...teams].sort((a, b) => {
+    // Shelter-requiring teams first in emergency mode
+    if (emergencyMode) {
+      if (a.needsShelter && !b.needsShelter) return -1;
+      if (!a.needsShelter && b.needsShelter) return 1;
+    }
+    // More trainings per week = harder to schedule = first
+    if (b.trainingsPerWeek !== a.trainingsPerWeek) return b.trainingsPerWeek - a.trainingsPerWeek;
+    // More players = harder to fit = first
+    if (b.players !== a.players) return b.players - a.players;
+    // Fewer preferred days = more constrained = first
+    const aDays = a.preferredDays.length || 7;
+    const bDays = b.preferredDays.length || 7;
+    return aDays - bDays;
+  });
+
+  // Track occupied slots per field per day: fieldId -> day -> [{from, to, teamId}]
+  const occupied = {};
+  fields.forEach(f => {
+    occupied[f.id] = {};
+    for (let d = 0; d < 7; d++) {
+      occupied[f.id][d] = [];
+    }
+  });
+
+  for (const team of sortedTeams) {
+    let trainingsScheduled = 0;
+    const targetTrainings = team.trainingsPerWeek;
+
+    // Try each duration from requested down to minimum
+    const durations = [];
+    for (let d = team.duration; d >= team.minDuration; d -= 15) {
+      durations.push(d);
+    }
+
+    // Get available days for this team
+    let teamDays = team.preferredDays.length > 0 ? [...team.preferredDays] : [0, 1, 2, 3, 4, 5, 6];
+
+    // Spread trainings across different days
+    for (const duration of durations) {
+      if (trainingsScheduled >= targetTrainings) break;
+
+      // Try to spread across all available days
+      const daysToTry = [...teamDays];
+
+      // Shuffle to avoid always putting teams on the same days
+      for (let i = daysToTry.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [daysToTry[i], daysToTry[j]] = [daysToTry[j], daysToTry[i]];
+      }
+
+      // Sort by how many existing trainings this team already has on each day
+      const scheduledDays = result.filter(s => s.teamId === team.id).map(s => s.day);
+      daysToTry.sort((a, b) => {
+        const aCount = scheduledDays.filter(d => d === a).length;
+        const bCount = scheduledDays.filter(d => d === b).length;
+        return aCount - bCount;
+      });
+
+      for (const day of daysToTry) {
+        if (trainingsScheduled >= targetTrainings) break;
+
+        // Skip if already has training this day
+        if (scheduledDays.includes(day)) continue;
+
+        // Find suitable field
+        const slot = findSlot(team, day, duration, gap, emergencyMode, occupied);
+        if (slot) {
+          result.push({
+            teamId: team.id,
+            teamName: team.name,
+            sport: team.sport,
+            coach: team.coach,
+            players: team.players,
+            fieldId: slot.fieldId,
+            fieldName: slot.fieldName,
+            day,
+            from: slot.from,
+            to: slot.to,
+            duration,
+            originalDuration: team.duration,
+            shortened: duration < team.duration
+          });
+
+          occupied[slot.fieldId][day].push({ from: slot.from, to: slot.to, teamId: team.id });
+          scheduledDays.push(day);
+          trainingsScheduled++;
+        }
+      }
+    }
+  }
+
+  // Sort final schedule
+  result.sort((a, b) => {
+    if (a.day !== b.day) return a.day - b.day;
+    if (a.from !== b.from) return a.from - b.from;
+    return a.fieldName.localeCompare(b.fieldName);
+  });
+
+  return result;
+}
+
+function findSlot(team, day, duration, gap, emergencyMode, occupied) {
+  // Find suitable fields
+  const suitableFields = fields.filter(f => {
+    // Field must be available on this day
+    if (!f.days.includes(day)) return false;
+    // Field must support this sport
+    if (!f.sports.includes(team.sport)) return false;
+    // Field must have enough capacity
+    if (f.capacity < team.players) return false;
+    // Emergency mode: if team needs shelter, field must have it
+    if (emergencyMode && team.needsShelter && !f.hasShelter) return false;
+    return true;
+  });
+
+  // Sort fields: prefer fields with shelter if in emergency mode, then by capacity (smallest that fits)
+  suitableFields.sort((a, b) => {
+    if (emergencyMode) {
+      if (a.hasShelter && !b.hasShelter) return -1;
+      if (!a.hasShelter && b.hasShelter) return 1;
+    }
+    return a.capacity - b.capacity; // use smallest suitable field
+  });
+
+  for (const field of suitableFields) {
+    const fieldFrom = timeToMinutes(field.timeFrom);
+    const fieldTo = timeToMinutes(field.timeTo);
+
+    // Team preferred time
+    const teamFrom = team.timeFrom ? timeToMinutes(team.timeFrom) : fieldFrom;
+    const teamTo = team.timeTo ? timeToMinutes(team.timeTo) : fieldTo;
+
+    const startMin = Math.max(fieldFrom, teamFrom);
+    const endMax = Math.min(fieldTo, teamTo);
+
+    if (endMax - startMin < duration) continue;
+
+    // Try each possible start time in 15-min increments
+    const dayOccupied = occupied[field.id][day] || [];
+
+    for (let start = startMin; start + duration <= endMax; start += 15) {
+      const end = start + duration;
+
+      // Check conflicts with gap
+      let conflict = false;
+      for (const occ of dayOccupied) {
+        const occStart = occ.from - gap;
+        const occEnd = occ.to + gap;
+        if (start < occEnd && end > occStart) {
+          conflict = true;
+          break;
+        }
+      }
+
+      if (!conflict) {
+        return { fieldId: field.id, fieldName: field.name, from: start, to: end };
+      }
+    }
+  }
+
+  return null;
+}
+
+function getUnscheduledTrainings(schedule, teams) {
+  const unscheduled = [];
+  for (const team of teams) {
+    const scheduled = schedule.filter(s => s.teamId === team.id).length;
+    const missing = team.trainingsPerWeek - scheduled;
+    if (missing > 0) {
+      unscheduled.push({ team, scheduled, missing });
+    }
+  }
+  return unscheduled;
+}
+
+function showFlexDialog(unscheduled) {
+  const content = document.getElementById('flexDialogContent');
+  content.innerHTML = `
+    <p style="margin-bottom:16px;">הקבוצות הבאות לא שובצו במלואן. ציין את משך האימון המינימלי האפשרי:</p>
+    ${unscheduled.map(u => `
+      <div class="team-flex-row">
+        <label>${u.team.name}</label>
+        <span>שובצו ${u.scheduled} מתוך ${u.team.trainingsPerWeek} אימונים.</span>
+        <span>מבוקש: ${u.team.duration} דק'.</span>
+        <span>מינימום:</span>
+        <input type="number" id="flex_${u.team.id}" value="${Math.max(u.team.duration - 30, 45)}" min="30" max="${u.team.duration}" step="15"> דק'
+      </div>
+    `).join('')}
+  `;
+
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('stepFlex').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============= DISPLAY RESULTS =============
+function displayResults(schedule, unscheduled) {
+  displayStats(schedule, unscheduled);
+  displayAlerts(unscheduled);
+  displayMasterSchedule(schedule);
+  displayByField(schedule);
+  displayByTeam(schedule);
+}
+
+function displayStats(schedule, unscheduled) {
+  const totalTrainings = schedule.length;
+  const totalRequested = teams.reduce((sum, t) => sum + t.trainingsPerWeek, 0);
+  const successRate = totalRequested > 0 ? Math.round((totalTrainings / totalRequested) * 100) : 0;
+  const shortened = schedule.filter(s => s.shortened).length;
+
+  document.getElementById('schedulerStats').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-value">${totalTrainings}</div>
+      <div class="stat-label">אימונים שובצו</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${totalRequested}</div>
+      <div class="stat-label">אימונים מבוקשים</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" style="color: ${successRate === 100 ? 'var(--success)' : successRate >= 80 ? 'var(--warning)' : 'var(--danger)'}">${successRate}%</div>
+      <div class="stat-label">אחוז שיבוץ</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${shortened}</div>
+      <div class="stat-label">אימונים מקוצרים</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${teams.length}</div>
+      <div class="stat-label">קבוצות</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">${fields.length}</div>
+      <div class="stat-label">מגרשים</div>
+    </div>
+  `;
+}
+
+function displayAlerts(unscheduled) {
+  const container = document.getElementById('schedulerAlerts');
+  let html = '';
+
+  if (unscheduled.length === 0) {
+    html = '<div class="alert alert-success">כל הקבוצות שובצו בהצלחה!</div>';
+  } else {
+    html = '<div class="alert alert-warning"><div>';
+    html += '<strong>לא הצלחנו לשבץ את כל האימונים:</strong><br>';
+    unscheduled.forEach(u => {
+      html += `• ${u.team.name}: חסרים ${u.missing} אימונים (שובצו ${u.scheduled} מתוך ${u.team.trainingsPerWeek})<br>`;
+    });
+    html += '<br><em>טיפ: נסה להוסיף מגרשים, להרחיב שעות פעילות, או לאפשר גמישות בזמן אימון.</em>';
+    html += '</div></div>';
+  }
+
+  container.innerHTML = html;
+}
+
+function displayMasterSchedule(schedule) {
+  const container = document.getElementById('resultsMaster');
+  if (schedule.length === 0) {
+    container.innerHTML = '<div class="empty-state"><p>אין שיבוצים להצגה</p></div>';
+    return;
+  }
+
+  let html = '<h3>לוח שיבוץ שבועי</h3>';
+  html += '<div style="overflow-x:auto;">';
+  html += '<table class="schedule-table">';
+  html += '<tr><th>יום</th><th>שעה</th><th>מגרש</th><th>קבוצה</th><th>ענף</th><th>שחקנים</th><th>מאמן</th><th>משך</th><th>הערות</th></tr>';
+
+  for (const s of schedule) {
+    const notes = [];
+    if (s.shortened) notes.push(`קוצר מ-${s.originalDuration} דק'`);
+
+    html += `<tr>
+      <td><strong>${DAY_NAMES[s.day]}</strong></td>
+      <td>${minutesToTime(s.from)} - ${minutesToTime(s.to)}</td>
+      <td>${s.fieldName}</td>
+      <td><strong>${s.teamName}</strong></td>
+      <td><span class="slot-cell ${SPORT_CLASSES[s.sport]}">${SPORT_NAMES[s.sport]}</span></td>
+      <td>${s.players}</td>
+      <td>${s.coach || '-'}</td>
+      <td>${s.duration} דק'</td>
+      <td>${notes.length ? `<span class="conflict-badge">${notes.join(', ')}</span>` : ''}</td>
+    </tr>`;
+  }
+
+  html += '</table></div>';
+  container.innerHTML = html;
+}
+
+function displayByField(schedule) {
+  const container = document.getElementById('resultsByField');
+  let html = '<h3>שיבוץ לפי מגרש</h3>';
+
+  for (const field of fields) {
+    const fieldSchedule = schedule.filter(s => s.fieldId === field.id);
+    html += `<h4 style="margin-top:16px; color:var(--primary);">${field.name} (${field.capacity} שחקנים, ${field.hasShelter ? 'ממוגן' : 'לא ממוגן'})</h4>`;
+
+    if (fieldSchedule.length === 0) {
+      html += '<p style="color:var(--text-secondary); margin-bottom:16px;">אין אימונים משובצים במגרש זה</p>';
+      continue;
+    }
+
+    html += '<table class="schedule-table">';
+    html += '<tr><th>יום</th><th>שעה</th><th>קבוצה</th><th>ענף</th><th>שחקנים</th><th>מאמן</th></tr>';
+
+    for (const s of fieldSchedule) {
+      html += `<tr>
+        <td>${DAY_NAMES[s.day]}</td>
+        <td>${minutesToTime(s.from)} - ${minutesToTime(s.to)}</td>
+        <td><strong>${s.teamName}</strong></td>
+        <td><span class="slot-cell ${SPORT_CLASSES[s.sport]}">${SPORT_NAMES[s.sport]}</span></td>
+        <td>${s.players}</td>
+        <td>${s.coach || '-'}</td>
+      </tr>`;
+    }
+    html += '</table>';
+  }
+
+  container.innerHTML = html;
+}
+
+function displayByTeam(schedule) {
+  const container = document.getElementById('resultsByTeam');
+  let html = '';
+
+  for (const team of teams) {
+    const teamSchedule = schedule.filter(s => s.teamId === team.id);
+
+    html += `<div class="card per-team-output">
+      <div class="team-schedule-header" style="margin:-24px -24px 16px -24px; border-radius:var(--radius) var(--radius) 0 0; padding:16px 24px;">
+        <div>
+          <strong style="font-size:18px;">${team.name}</strong>
+          <span style="opacity:0.8; margin-right:10px;">${SPORT_NAMES[team.sport]}</span>
+        </div>
+        <div style="text-align:left;">
+          ${team.coach ? `<div>מאמן: ${team.coach}</div>` : ''}
+          <div>${team.players} שחקנים | ${teamSchedule.length}/${team.trainingsPerWeek} אימונים</div>
+        </div>
+      </div>`;
+
+    if (teamSchedule.length === 0) {
+      html += '<div class="alert alert-danger">לא שובצו אימונים לקבוצה זו</div>';
+    } else {
+      html += '<table class="schedule-table">';
+      html += '<tr><th>יום</th><th>שעה</th><th>מגרש</th><th>משך</th><th>הערות</th></tr>';
+      for (const s of teamSchedule) {
+        const notes = s.shortened ? `קוצר מ-${s.originalDuration} דק'` : '';
+        html += `<tr>
+          <td><strong>${DAY_NAMES[s.day]}</strong></td>
+          <td>${minutesToTime(s.from)} - ${minutesToTime(s.to)}</td>
+          <td>${s.fieldName}</td>
+          <td>${s.duration} דק'</td>
+          <td>${notes ? `<span class="conflict-badge">${notes}</span>` : ''}</td>
+        </tr>`;
+      }
+      html += '</table>';
+    }
+
+    const clubName = document.getElementById('clubName').value || 'מועדון ספורט';
+    html += `<p style="margin-top:12px; font-size:12px; color:var(--text-secondary); text-align:center;">
+      ${clubName} | שיבוץ אימונים | נוצר ב-${new Date().toLocaleDateString('he-IL')}
+    </p></div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function showResultsTab(tab) {
+  document.querySelectorAll('.results-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+
+  document.getElementById('resultsMaster').style.display = tab === 'master' ? 'block' : 'none';
+  document.getElementById('resultsByField').style.display = tab === 'byField' ? 'block' : 'none';
+  document.getElementById('resultsByTeam').style.display = tab === 'byTeam' ? 'block' : 'none';
+}
+
+// ============= EXPORT & SHARE =============
+function printSchedule() {
+  window.print();
+}
+
+function exportCSV() {
+  if (schedule.length === 0) { alert('אין נתונים לייצוא'); return; }
+
+  let csv = '\ufeff'; // BOM for Hebrew
+  csv += 'יום,שעת התחלה,שעת סיום,מגרש,קבוצה,ענף,שחקנים,מאמן,�שך (דקות),הערות\n';
+
+  for (const s of schedule) {
+    const notes = s.shortened ? `קוצר מ-${s.originalDuration} דק'` : '';
+    csv += `${DAY_NAMES[s.day]},${minutesToTime(s.from)},${minutesToTime(s.to)},${s.fieldName},${s.teamName},${SPORT_NAMES[s.sport]},${s.players},${s.coach || ''},${s.duration},${notes}\n`;
+  }
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'schedule.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function shareLink() {
+  // Encode the full state into URL hash for sharing
+  const state = {
+    fields,
+    teams: teams.map(t => ({ ...t })),
+    settings: {
+      clubName: document.getElementById('clubName').value,
+      gap: document.getElementById('gapBetween').value,
+      emergency: document.getElementById('emergencyModeToggle').classList.contains('active')
+    }
+  };
+
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+  const url = window.location.origin + window.location.pathname + '#data=' + encoded;
+
+  // Copy to clipboard
+  navigator.clipboard.writeText(url).then(() => {
+    alert('הקישור הועתק ללוח! ניתן לשתף אותו עם אחרים.');
+  }).catch(() => {
+    prompt('העתק את הקישור:', url);
+  });
+}
+
+// ============= LOAD FROM URL =============
+function loadFromURL() {
+  const hash = window.location.hash;
+  if (hash.startsWith('#data=')) {
+    try {
+      const encoded = hash.substring(6);
+      const state = JSON.parse(decodeURIComponent(escape(atob(encoded))));
+
+      if (state.fields) {
+        fields = state.fields;
+        renderFields();
+      }
+      if (state.teams) {
+        teams = state.teams;
+        renderTeams();
+      }
+      if (state.settings) {
+        if (state.settings.clubName) document.getElementById('clubName').value = state.settings.clubName;
+        if (state.settings.gap) document.getElementById('gapBetween').value = state.settings.gap;
+        if (state.settings.emergency) {
+          document.getElementById('emergencyModeToggle').classList.add('active');
+        }
+      }
+
+      // Auto-run scheduler
+      const gap = parseInt(state.settings?.gap) || 0;
+      const emergencyMode = state.settings?.emergency || false;
+      schedule = computeSchedule(teams, fields, gap, emergencyMode);
+      const unscheduled = getUnscheduledTrainings(schedule, teams);
+      displayResults(schedule, unscheduled);
+      goToStep(4);
+    } catch (e) {
+      console.error('Failed to load data from URL:', e);
+    }
+  }
+}
+
+// ============= SHELTER TOGGLE LABELS =============
+document.getElementById('fieldShelterToggle').addEventListener('click', function() {
+  document.getElementById('shelterLabel').textContent = this.classList.contains('active') ? 'יש מיגון' : 'אין מיגון';
+});
+
+// ============= INIT =============
+renderFields();
+renderTeams();
+loadFromURL();
+</script>
+
+</body>
+</html>
+
