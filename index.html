@@ -488,8 +488,9 @@ input:focus, select:focus, textarea:focus {
   .no-print { display: none !important; }
   .card { box-shadow: none; border: 1px solid #ddd; }
   body { background: white; }
-  
-  H� , h3 { font-weight: bold; }
+  .header { background: #333 !important; }
+}
+
 /* Loading animation */
 .loading {
   display: flex;
@@ -559,7 +560,7 @@ input:focus, select:focus, textarea:focus {
 
 /* Duration flex dialog */
 .flex-dialog {
-  background: #fff8e0;
+  background: #fff8e1;
   border: 2px solid var(--warning);
   border-radius: var(--radius);
   padding: 20px;
@@ -582,12 +583,8 @@ input:focus, select:focus, textarea:focus {
 <body>
 
 <div class="container">
-  
-  
-  
-  
-  
-        <label> class="header">
+  <!-- Header (hidden) -->
+  <div class="header" style="display:none;">
     <h1>מערכת שיבוץ מגרשים</h1>
     <p>ניהול חכם של שיבוץ קבוצות למגרשים בהתאם לאילוצים</p>
     <div class="emergency-badge">מותאם לתקופת חירום</div>
@@ -617,7 +614,7 @@ input:focus, select:focus, textarea:focus {
   <div id="step1" class="section active">
     <div class="card">
       <h2>הגדרת מגרשים</h2>
-      <p style="color:var(--text-secondary); margin-bottom:20px;">הוסף את כל המגרשים הזמינים למועדון. ציין את קיבולת השחקנים, זמינות, ומיגון.</p>
+      <p style="color:var(--text-secondary); margin-bottom:20px;">הוסף את כל המגרשים הזמינים למועדון. ציין את קיבולת השחקנים וזמינות לפי ימים ושעות.</p>
 
       <div id="fieldsContainer"></div>
 
@@ -637,9 +634,9 @@ input:focus, select:focus, textarea:focus {
             </select>
           </div>
           <div class="form-group">
-            <label>מקסימום שחקנים *</label>
-            <input type="number" id="fieldCapacity" min="1" value="30" placeholder="30">
-            <small>על פי תקנות תקופת חירום</small>
+            <label>כמות מקסימלית של שחקנים במגרש *</label>
+            <input type="number" id="fieldCapacity" min="1" value="" placeholder="הזן את הכמות ההנחיות">
+            <small>הון את הכמור המקסימלית המותתרת עץ י הנחיות</small>
           </div>
           <div class="form-group">
             <label>ענפי ספורט מתאימים</label>
@@ -655,36 +652,73 @@ input:focus, select:focus, textarea:focus {
         </div>
 
         <div class="form-group">
-          <label>ימים זמינים *</label>
-          <div class="checkbox-group" id="fieldDays">
-            <label class="checkbox-label"><input type="checkbox" value="0" checked><span>ראשון</span></label>
-            <label class="checkbox-label"><input type="checkbox" value="1" checked><span>שני</span></label>
-            <label class="checkbox-label"><input type="checkbox" value="2" checked><span>שלישי</span></label>
-            <label class="checkbox-label"><input type="checkbox" value="3" checked><span>רביעי</span></label>
-            <label class="checkbox-label"><input type="checkbox" value="4" checked><span>חמישי</span></label>
-            <label class="checkbox-label"><input type="checkbox" value="5"><span>שישי</span></label>
-            <label class="checkbox-label"><input type="checkbox" value="6"><span>שבת</span></label>
+          <label>ימים זמינים ושעות לכל יום *</label>
+          <small style="margin-bottom:12px;">סמן את הימים הזמינים והגדר שעות שונות לכל יום (שישי/שבת יכולים להיות שונים מימי חול)</small>
+          <div id="fieldDaysHours" style="margin-top:10px;">
+            <div class="field-day-row" data-day="0" style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+              <label class="checkbox-label" style="min-width:90px;"><input type="checkbox" value="0" checked onchange="toggleDayHours(this)"><span>ראשון</span></label>
+              <div class="day-hours" style="display:flex; align-items:center; gap:6px;">
+                <label style="font-size:13px; font-weight:normal;">מ-</label>
+                <input type="time" class="day-from" value="07:00" style="width:130px;">
+                <label style="font-size:13px; font-weight:normal;">עד</label>
+                <input type="time" class="day-to" value="22:00" style="width:130px;">
+              </div>
+            </div>
+            <div class="field-day-row" data-day="1" style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+              <label class="checkbox-label" style="min-width:90px;"><input type="checkbox" value="1" checked onchange="toggleDayHours(this)"><span>שני</span></label>
+              <div class="day-hours" style="display:flex; align-items:center; gap:6px;">
+                <label style="font-size:13px; font-weight:normal;">מ-</label>
+                <input type="time" class="day-from" value="07:00" style="width:130px;">
+                <label style="font-size:13px; font-weight:normal;">עד</label>
+                <input type="time" class="day-to" value="22:00" style="width:130px;">
+              </div>
+            </div>
+            <div class="field-day-row" data-day="2" style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+              <label class="checkbox-label" style="min-width:90px;"><input type="checkbox" value="2" checked onchange="toggleDayHours(this)"><span>שלישי</span></label>
+              <div class="day-hours" style="display:flex; align-items:center; gap:6px;">
+                <label style="font-size:13px; font-weight:normal;">מ-</label>
+                <input type="time" class="day-from" value="07:00" style="width:130px;">
+                <label style="font-size:13px; font-weight:normal;">עד</label>
+                <input type="time" class="day-to" value="22:00" style="width:130px;">
+              </div>
+            </div>
+            <div class="field-day-row" data-day="3" style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+              <label class="checkbox-label" style="min-width:90px;"><input type="checkbox" value="3" checked onchange="toggleDayHours(this)"><span>רביעי</span></label>
+              <div class="day-hours" style="display:flex; align-items:center; gap:6px;">
+                <label style="font-size:13px; font-weight:normal;">מ-</label>
+                <input type="time" class="day-from" value="07:00" style="width:130px;">
+                <label style="font-size:13px; font-weight:normal;">עד</label>
+                <input type="time" class="day-to" value="22:00" style="width:130px;">
+              </div>
+            </div>
+            <div class="field-day-row" data-day="4" style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+              <label class="checkbox-label" style="min-width:90px;"><input type="checkbox" value="4" checked onchange="toggleDayHours(this)"><span>חמישי</span></label>
+              <div class="day-hours" style="display:flex; align-items:center; gap:6px;">
+                <label style="font-size:13px; font-weight:normal;">מ-</label>
+                <input type="time" class="day-from" value="07:00" style="width:130px;">
+                <label style="font-size:13px; font-weight:normal;">עד</label>
+                <input type="time" class="day-to" value="22:00" style="width:130px;">
+              </div>
+            </div>
+            <div class="field-day-row" data-day="5" style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+              <label class="checkbox-label" style="min-width:90px;"><input type="checkbox" value="5" onchange="toggleDayHours(this)"><span>שישי</span></label>
+              <div class="day-hours" style="display:flex; align-items:center; gap:6px; opacity:0.4; pointer-events:none;">
+                <label style="font-size:13px; font-weight:normal;">מ-</label>
+                <input type="time" class="day-from" value="08:00" style="width:130px;">
+                <label style="font-size:13px; font-weight:normal;">עד</label>
+                <input type="time" class="day-to" value="14:00" style="width:130px;">
+              </div>
+            </div>
+            <div class="field-day-row" data-day="6" style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+              <label class="checkbox-label" style="min-width:90px;"><input type="checkbox" value="6" onchange="toggleDayHours(this)"><span>שבת</span></label>
+              <div class="day-hours" style="display:flex; align-items:center; gap:6px; opacity:0.4; pointer-events:none;">
+                <label style="font-size:13px; font-weight:normal;">מ-</label>
+                <input type="time" class="day-from" value="08:00" style="width:130px;">
+                <label style="font-size:13px; font-weight:normal;">עד</label>
+                <input type="time" class="day-to" value="18:00" style="width:130px;">
+              </div>
+            </div>
           </div>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-group">
-            <label>שעות פעילות - מ</label>
-            <input type="time" id="fieldTimeFrom" value="07:00">
-          </div>
-          <div class="form-group">
-            <label>שעות פעילות - עד</label>
-            <input type="time" id="fieldTimeTo" value="22:00">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>האם יש מיגון?</label>
-          <div class="toggle-container">
-            <div class="toggle" id="fieldShelterToggle" onclick="this.classList.toggle('active')"></div>
-            <span id="shelterLabel">אין מיגון</span>
-          </div>
-          <small>במצב חירום, מגרש ללא מיגון עשוי להיות מוגבל</small>
         </div>
 
         <div class="btn-group">
@@ -702,7 +736,7 @@ input:focus, select:focus, textarea:focus {
   <div id="step2" class="section">
     <div class="card">
       <h2>הגדרת קבוצות</h2>
-      <p style="color:var(--text-secondary); margin-bottom:20px;">הוסף את כל הקבוצות שצריכות להתאמן. ציין ענף, מספר שחקנים, ודרישות אימון.</p>
+      <p style="color:var(--text-secondary); margin-bottom:20px;">הוסף את כל הקבוצות שצריכות להתאמן. מור, מספר שחקנים, ודרישות אימון.</p>
 
       <div id="teamsContainer"></div>
 
@@ -770,14 +804,6 @@ input:focus, select:focus, textarea:focus {
           </div>
         </div>
 
-        <div class="form-group">
-          <label>דורש מיגון?</label>
-          <div class="toggle-container">
-            <div class="toggle" id="teamShelterToggle" onclick="this.classList.toggle('active')"></div>
-            <span>לא נדרש מיגון</span>
-          </div>
-        </div>
-
         <div class="btn-group">
           <button class="btn btn-primary" onclick="addTeam()">+ הוסף קבוצה</button>
         </div>
@@ -807,7 +833,7 @@ input:focus, select:focus, textarea:focus {
         </div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" style="display:none;">
         <label>מצב חירום - הגבלות</label>
         <div class="toggle-container" style="margin-bottom: 10px;">
           <div class="toggle active" id="emergencyModeToggle" onclick="this.classList.toggle('active')"></div>
@@ -897,32 +923,50 @@ let schedule = [];
 let currentStep = 1;
 
 // ============= FIELD MANAGEMENT =============
+function toggleDayHours(checkbox) {
+  const row = checkbox.closest('.field-day-row');
+  const hoursDiv = row.querySelector('.day-hours');
+  if (checkbox.checked) {
+    hoursDiv.style.opacity = '1';
+    hoursDiv.style.pointerEvents = 'auto';
+  } else {
+    hoursDiv.style.opacity = '0.4';
+    hoursDiv.style.pointerEvents = 'none';
+  }
+}
+
 function addField() {
   const name = document.getElementById('fieldName').value.trim();
   const type = document.getElementById('fieldType').value;
   const capacity = parseInt(document.getElementById('fieldCapacity').value);
-  const timeFrom = document.getElementById('fieldTimeFrom').value;
-  const timeTo = document.getElementById('fieldTimeTo').value;
-  const hasShelter = document.getElementById('fieldShelterToggle').classList.contains('active');
 
   if (!name) { alert('נא להזין שם מגרש'); return; }
-  if (!capacity || capacity < 1) { alert('נא להזין קיבולת שחקנים'); return; }
+  if (!capacity || capacity < 1) { alert('נא להזין כמות מקסימלית של שחקנים'); return; }
 
   const sports = [];
   document.querySelectorAll('#addFieldForm .checkbox-group:first-of-type input:checked').forEach(cb => {
     sports.push(cb.value);
   });
 
+  // Collect per-day hours
   const days = [];
-  document.querySelectorAll('#fieldDays input:checked').forEach(cb => {
-    days.push(parseInt(cb.value));
+  const dayHours = {}; // day -> {from, to}
+  document.querySelectorAll('#fieldDaysHours .field-day-row').forEach(row => {
+    const cb = row.querySelector('input[type="checkbox"]');
+    if (cb.checked) {
+      const dayNum = parseInt(cb.value);
+      days.push(dayNum);
+      const fromInput = row.querySelector('.day-from');
+      const toInput = row.querySelector('.day-to');
+      dayHours[dayNum] = { from: fromInput.value, to: toInput.value };
+    }
   });
 
   if (days.length === 0) { alert('נא לבחור לפחות יום אחד'); return; }
 
   fields.push({
     id: Date.now(),
-    name, type, capacity, sports, days, timeFrom, timeTo, hasShelter
+    name, type, capacity, sports, days, dayHours
   });
 
   document.getElementById('fieldName').value = '';
@@ -941,7 +985,12 @@ function renderFields() {
     return;
   }
 
-  container.innerHTML = fields.map(f => `
+  container.innerHTML = fields.map(f => {
+    const daysInfo = f.days.map(d => {
+      const h = f.dayHours && f.dayHours[d] ? f.dayHours[d] : { from: f.timeFrom || '07:00', to: f.timeTo || '22:00' };
+      return `${DAY_NAMES[d]}: ${h.from}-${h.to}`;
+    }).join(' | ');
+    return `
     <div class="item-card">
       <div class="item-header">
         <span class="item-title">${f.name}</span>
@@ -949,16 +998,12 @@ function renderFields() {
       </div>
       <div class="item-details">
         <span>סוג: ${f.type === 'outdoor' ? 'פתוח' : f.type === 'indoor' ? 'מקורה' : 'חצי מגרש'}</span>
-        <span>קיבולת: ${f.capacity} שחקנים</span>
+        <span>מקסימום: ${f.capacity} שחקנים</span>
         <span>ענפים: ${f.sports.map(s => SPORT_NAMES[s]).join(', ')}</span>
-        <span>ימים: ${f.days.map(d => DAY_NAMES[d]).join(', ')}</span>
-        <span>שעות: ${f.timeFrom} - ${f.timeTo}</span>
-        <span class="shelter-indicator ${f.hasShelter ? 'shelter-yes' : 'shelter-no'}">
-          ${f.hasShelter ? 'יש מיגון' : 'אין מיגון'}
-        </span>
       </div>
-    </div>
-  `).join('');
+      <div style="font-size:12px; color:var(--text-secondary); margin-top:8px;">${daysInfo}</div>
+    </div>`;
+  }).join('');
 }
 
 // ============= TEAM MANAGEMENT =============
@@ -971,7 +1016,6 @@ function addTeam() {
   const duration = parseInt(document.getElementById('teamDuration').value);
   const timeFrom = document.getElementById('teamTimeFrom').value;
   const timeTo = document.getElementById('teamTimeTo').value;
-  const needsShelter = document.getElementById('teamShelterToggle').classList.contains('active');
 
   if (!name) { alert('נא להזין שם קבוצה'); return; }
   if (!players || players < 1) { alert('נא להזין מספר שחקנים'); return; }
@@ -985,7 +1029,7 @@ function addTeam() {
   teams.push({
     id: Date.now(),
     name, sport, players, coach, trainingsPerWeek, duration,
-    preferredDays, timeFrom, timeTo, needsShelter,
+    preferredDays, timeFrom, timeTo,
     minDuration: duration // default: same as requested
   });
 
@@ -1019,9 +1063,6 @@ function renderTeams() {
         <span>${t.duration} דקות לאימון</span>
         ${t.coach ? `<span>מאמן: ${t.coach}</span>` : ''}
         ${t.preferredDays.length ? `<span>ימים: ${t.preferredDays.map(d => DAY_NAMES[d]).join(', ')}</span>` : ''}
-        <span class="shelter-indicator ${t.needsShelter ? 'shelter-yes' : 'shelter-no'}">
-          ${t.needsShelter ? 'דורש מיגון' : 'לא דורש מיגון'}
-        </span>
       </div>
     </div>
   `).join('');
@@ -1111,13 +1152,8 @@ function runSchedulerWithFlex() {
 function computeSchedule(teams, fields, gap, emergencyMode) {
   const result = [];
 
-  // Sort teams: most constrained first (fewer preferred days, more trainings needed, needs shelter)
+  // Sort teams: most constrained first (fewer preferred days, more trainings needed, more players)
   const sortedTeams = [...teams].sort((a, b) => {
-    // Shelter-requiring teams first in emergency mode
-    if (emergencyMode) {
-      if (a.needsShelter && !b.needsShelter) return -1;
-      if (!a.needsShelter && b.needsShelter) return 1;
-    }
     // More trainings per week = harder to schedule = first
     if (b.trainingsPerWeek !== a.trainingsPerWeek) return b.trainingsPerWeek - a.trainingsPerWeek;
     // More players = harder to fit = first
@@ -1221,25 +1257,24 @@ function findSlot(team, day, duration, gap, emergencyMode, occupied) {
     if (!f.days.includes(day)) return false;
     // Field must support this sport
     if (!f.sports.includes(team.sport)) return false;
-    // Field must have enough capacity
+    // Field must have enough capacity for the team
     if (f.capacity < team.players) return false;
-    // Emergency mode: if team needs shelter, field must have it
-    if (emergencyMode && team.needsShelter && !f.hasShelter) return false;
     return true;
   });
 
-  // Sort fields: prefer fields with shelter if in emergency mode, then by capacity (smallest that fits)
-  suitableFields.sort((a, b) => {
-    if (emergencyMode) {
-      if (a.hasShelter && !b.hasShelter) return -1;
-      if (!a.hasShelter && b.hasShelter) return 1;
-    }
-    return a.capacity - b.capacity; // use smallest suitable field
-  });
+  // Sort fields by capacity (smallest that fits first)
+  suitableFields.sort((a, b) => a.capacity - b.capacity);
 
   for (const field of suitableFields) {
-    const fieldFrom = timeToMinutes(field.timeFrom);
-    const fieldTo = timeToMinutes(field.timeTo);
+    // Use per-day hours if available, fallback to legacy single time range
+    let fieldFrom, fieldTo;
+    if (field.dayHours && field.dayHours[day]) {
+      fieldFrom = timeToMinutes(field.dayHours[day].from);
+      fieldTo = timeToMinutes(field.dayHours[day].to);
+    } else {
+      fieldFrom = timeToMinutes(field.timeFrom || '07:00');
+      fieldTo = timeToMinutes(field.timeTo || '22:00');
+    }
 
     // Team preferred time
     const teamFrom = team.timeFrom ? timeToMinutes(team.timeFrom) : fieldFrom;
@@ -1409,7 +1444,7 @@ function displayByField(schedule) {
 
   for (const field of fields) {
     const fieldSchedule = schedule.filter(s => s.fieldId === field.id);
-    html += `<h4 style="margin-top:16px; color:var(--primary);">${field.name} (${field.capacity} שחקנים, ${field.hasShelter ? 'ממוגן' : 'לא ממוגן'})</h4>`;
+    html += `<h4 style="margin-top:16px; color:var(--primary);">${field.name} (מקס' ${field.capacity} שחקנים)</h4>`;
 
     if (fieldSchedule.length === 0) {
       html += '<p style="color:var(--text-secondary); margin-bottom:16px;">אין אימונים משובצים במגרש זה</p>';
@@ -1499,7 +1534,7 @@ function exportCSV() {
   if (schedule.length === 0) { alert('אין נתונים לייצוא'); return; }
 
   let csv = '\ufeff'; // BOM for Hebrew
-  csv += 'יום,שעת התחלה,שעת סיום,מגרש,קבוצה,ענף,שחקנים,מאמן,�שך (דקות),הערות\n';
+  csv += 'יום,שעת התחלה,שעת סיום,מגרש,קבוצה,ענף,שחקנים,מאמן,משך (דקות),הערות\n';
 
   for (const s of schedule) {
     const notes = s.shortened ? `קוצר מ-${s.originalDuration} דק'` : '';
@@ -1575,11 +1610,6 @@ function loadFromURL() {
   }
 }
 
-// ============= SHELTER TOGGLE LABELS =============
-document.getElementById('fieldShelterToggle').addEventListener('click', function() {
-  document.getElementById('shelterLabel').textContent = this.classList.contains('active') ? 'יש מיגון' : 'אין מיגון';
-});
-
 // ============= INIT =============
 renderFields();
 renderTeams();
@@ -1588,4 +1618,3 @@ loadFromURL();
 
 </body>
 </html>
-
